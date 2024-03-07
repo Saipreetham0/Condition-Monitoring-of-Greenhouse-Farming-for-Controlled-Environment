@@ -1,6 +1,5 @@
 #include <Arduino.h>
 
-/* Fill-in information from Blynk Device Info here */
 #define BLYNK_TEMPLATE_ID "TMPL3rjsoHVgj"
 #define BLYNK_TEMPLATE_NAME "Green House"
 #define BLYNK_AUTH_TOKEN "bn9g-Msz4YQ14sytdebjlwWLOtpL-kUW"
@@ -12,6 +11,11 @@
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+
+#define BLYNK_GREEN "#23C48E"
+#define BLYNK_RED "#D3435C"
+
+// WidgetLED led1(V4);
 
 #define fanRelayPin 14
 #define heaterRelayPin 26
@@ -85,7 +89,29 @@ void sendSensorData()
   Blynk.virtualWrite(V1, humidity);               // Virtual pin V6 for humidity
   Blynk.virtualWrite(V2, gasValue);               // Virtual pin V7 for gas sensor
   Blynk.virtualWrite(V3, soilMoisturePercentage); // Virtual pin V8 for soil moisture sensor
-  Blynk.virtualWrite(V4, ldrValue);               // Virtual pin V9 for LDR sensor
+  // Blynk.virtualWrite(V4, ldrValue);               // Virtual pin V9 for LDR sensor
+
+  bool value = digitalRead(ldrPin);
+  //  Serial.print("PIR Value: ");
+  //  Serial.println(value);
+  if (value)
+  {
+    // led1.off();
+    // led1.setColor(BLYNK_GREEN);
+    // Blynk.setProperty(V4, "color", "#90EE90");
+    WidgetLED LED(V4);
+    LED.off();
+  }
+  else
+  {
+    WidgetLED LED(V4);
+    LED.on();
+
+    // Blynk.setProperty(V4, "color", "#D3435C");
+
+    // led1.on();
+    // led1.setColor(BLYNK_RED);
+  }
 
   lcd.clear();
   // Display sensor values on LCD
@@ -114,13 +140,6 @@ void sendSensorData()
 
   delay(2000); // Wait 2 seconds before clearing the LCD
   lcd.clear();
-
-  // lcd.setCursor(0, 0);
-  // lcd.print("LDR: ");
-  // lcd.print(ldrValue);
-
-  // delay(2000); // Wait 2 seconds before clearing the LCD
-  // lcd.clear();
 }
 
 void connectWiFi()
